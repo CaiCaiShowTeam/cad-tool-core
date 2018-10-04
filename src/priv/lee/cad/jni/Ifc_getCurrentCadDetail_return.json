@@ -1,0 +1,10 @@
+{
+	"number": "代号图号",
+	"name": "名称",
+	"jdeNum": "JDE项目号",
+	"material": "材料",
+	"quantity": "数量",
+	"singleWeight": "单重",
+	"totalWeigth": "总重",
+	"description": "备注"
+}

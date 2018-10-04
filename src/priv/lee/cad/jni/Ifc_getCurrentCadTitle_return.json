@@ -1,0 +1,12 @@
+{
+	"number": "代号图号",
+	"name": "名称",
+	"jdeNum": "JDE项目号",
+	"material": "材料",
+	"detailedNum": "详细图号",
+	"weight": "重量",
+	"totalPage": "共页",
+	"indexPage": "第页",
+	"proportion": "比例",
+	"size": "图幅"
+}
