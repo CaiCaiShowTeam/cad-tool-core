@@ -1,6 +1,7 @@
 package priv.lee.cad.ui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
@@ -80,7 +81,7 @@ public abstract class AbstractDialog extends JDialog
 			}
 		}
 	}
-
+	
 	private void doSelfAdaption() {
 		// get screen size
 		Rectangle rec = toolkit.getScreenSize(this.getGraphicsConfiguration());
@@ -89,6 +90,33 @@ public abstract class AbstractDialog extends JDialog
 		doSelfAdaption(rec, this);
 
 		getContentPane().setPreferredSize(getPreferredSize());
+	}
+
+	@Override
+	public void doSelfAdaption(Cloneable cloneable, Component component) {
+		ClientAssert.notNull(cloneable, "Cloneable must not be null");
+		ClientAssert.notNull(component, "Component must not be null");
+		ClientAssert.isInstanceOf(Rectangle.class, cloneable, "Cloneable must extends Rectangle");
+
+		double horizontalProportion = getHorizontalProportion();
+		double verticalProportion = getVerticalProportion();
+		Rectangle rec = (Rectangle) cloneable;
+
+		logger.debug("cloneable:" + rec + ",horizontalProportion:" + horizontalProportion + ",verticalProportion:"
+				+ verticalProportion);
+		ClientAssert.isTrue(horizontalProportion > 0 && horizontalProportion <= 1,
+				"Horizontal proportion must be greater than 0 less than 1 or equal to 1");
+		ClientAssert.isTrue(verticalProportion > 0 && verticalProportion <= 1,
+				"Vertical proportion must be greater than 0 less than 1 or equal to 1");
+
+		// performance by proportion
+		Double width = rec.width * horizontalProportion;
+		Double height = rec.height * verticalProportion;
+		Double x = (rec.width - width) / 2;
+		Double y = (rec.height - height) / 2;
+		logger.debug("x:" + x + ",y:" + y + ",width:" + width + ",height:" + height);
+		component.setBounds(new Rectangle(x.intValue(), y.intValue(), width.intValue(), height.intValue()));
+		component.setPreferredSize(new Dimension(width.intValue(), height.intValue()));
 	}
 
 	@Override

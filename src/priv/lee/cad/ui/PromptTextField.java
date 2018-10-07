@@ -18,6 +18,50 @@ import priv.lee.cad.util.ClientAssert;
 
 public class PromptTextField extends JComponent {
 
+	public static class PromptTextFieldDimension {
+		public int height;
+		public int promptWidth;
+		public int textWidth;
+
+		public PromptTextFieldDimension(Dimension parentSize, double promptWidthProportion, double textWidthProportion,
+				double heightProportion) {
+			ClientAssert.notNull(parentSize, "Parent size must not be null");
+			ClientAssert.isTrue(promptWidthProportion > 0 && promptWidthProportion <= 1,
+					"Prompt width proportion must be greater than 0 less than 1 or equal to 1");
+			ClientAssert.isTrue(textWidthProportion > 0 && textWidthProportion <= 1,
+					"Text width proportion must be greater than 0 less than 1 or equal to 1");
+			ClientAssert.isTrue(heightProportion > 0 && heightProportion <= 1,
+					"Height proportion must be greater than 0 less than 1 or equal to 1");
+
+			this.promptWidth = ((Double) (parentSize.width * promptWidthProportion)).intValue();
+			this.textWidth = ((Double) (parentSize.width * textWidthProportion)).intValue();
+			this.height = ((Double) (parentSize.height * heightProportion)).intValue();
+		}
+
+		public PromptTextFieldDimension(int promptWidth, int textWidth, int height) {
+			ClientAssert.isTrue(promptWidth > 0, "Prompt width needs to be greater than 0");
+			ClientAssert.isTrue(textWidth > 0, "Text width needs to be greater than 0");
+			ClientAssert.isTrue(height > 0, "height needs to be greater than 0");
+
+			this.promptWidth = promptWidth;
+			this.textWidth = textWidth;
+			this.height = height;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("PromptTextFieldDimension [promptWidth=");
+			builder.append(promptWidth);
+			builder.append(", textWidth=");
+			builder.append(textWidth);
+			builder.append(", height=");
+			builder.append(height);
+			builder.append("]");
+			return builder.toString();
+		}
+	}
+
 	private static final Logger logger = Logger.getLogger(PromptTextField.class);
 
 	private static final long serialVersionUID = -6696586333097590589L;
@@ -42,12 +86,12 @@ public class PromptTextField extends JComponent {
 	public static PromptTextField newInstance(String prompt, String text, PromptTextFieldDimension dimension) {
 		return newInstance(new JLabel(prompt), new JTextField(text), dimension);
 	}
-
 	private PromptTextFieldDimension dimension;
 	private MiddleAlignGap gap = new MiddleAlignGap(5, 5);
 	private int labelAligment = SwingConstants.RIGHT;
 	private LayoutManager layout = new FlowLayout(FlowLayout.LEFT, gap.hGap, gap.vGap);
 	private JLabel prompt;
+
 	private JTextField text;
 
 	private PromptTextField(JLabel prompt, JTextField text, PromptTextFieldDimension dimension) {
@@ -132,49 +176,5 @@ public class PromptTextField extends JComponent {
 
 	public void setText(JTextField text) {
 		this.text = text;
-	}
-
-	public static class PromptTextFieldDimension {
-		public int height;
-		public int promptWidth;
-		public int textWidth;
-
-		public PromptTextFieldDimension(Dimension parentSize, double promptWidthProportion, double textWidthProportion,
-				double heightProportion) {
-			ClientAssert.notNull(parentSize, "Parent size must not be null");
-			ClientAssert.isTrue(promptWidthProportion > 0 && promptWidthProportion <= 1,
-					"Prompt width proportion must be greater than 0 less than 1 or equal to 1");
-			ClientAssert.isTrue(textWidthProportion > 0 && textWidthProportion <= 1,
-					"Text width proportion must be greater than 0 less than 1 or equal to 1");
-			ClientAssert.isTrue(heightProportion > 0 && heightProportion <= 1,
-					"Height proportion must be greater than 0 less than 1 or equal to 1");
-
-			this.promptWidth = ((Double) (parentSize.width * promptWidthProportion)).intValue();
-			this.textWidth = ((Double) (parentSize.width * textWidthProportion)).intValue();
-			this.height = ((Double) (parentSize.height * heightProportion)).intValue();
-		}
-
-		public PromptTextFieldDimension(int promptWidth, int textWidth, int height) {
-			ClientAssert.isTrue(promptWidth > 0, "Prompt width needs to be greater than 0");
-			ClientAssert.isTrue(textWidth > 0, "Text width needs to be greater than 0");
-			ClientAssert.isTrue(height > 0, "height needs to be greater than 0");
-
-			this.promptWidth = promptWidth;
-			this.textWidth = textWidth;
-			this.height = height;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("PromptTextFieldDimension [promptWidth=");
-			builder.append(promptWidth);
-			builder.append(", textWidth=");
-			builder.append(textWidth);
-			builder.append(", height=");
-			builder.append(height);
-			builder.append("]");
-			return builder.toString();
-		}
 	}
 }

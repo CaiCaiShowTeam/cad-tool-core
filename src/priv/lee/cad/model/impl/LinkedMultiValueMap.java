@@ -1,6 +1,8 @@
 package priv.lee.cad.model.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -13,7 +15,6 @@ import priv.lee.cad.model.MultiValueMap;
 public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 3801124242820219131L;
-
 	private final Map<K, List<V>> targetMap;
 
 	public LinkedMultiValueMap() {
@@ -30,14 +31,18 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 
 	@Override
 	public void add(K key, V value) {
-		List<V> values = this.targetMap.computeIfAbsent(key, k -> new LinkedList<>());
-		values.add(value);
+		if (!targetMap.containsKey(key)) {
+			List<V> values = Arrays.asList(value);
+			targetMap.put(key, values);
+		}
 	}
 
 	@Override
 	public void addAll(K key, List<? extends V> values) {
-		List<V> currentValues = this.targetMap.computeIfAbsent(key, k -> new LinkedList<>());
-		currentValues.addAll(values);
+		if (!targetMap.containsKey(key)) {
+			List<V> currentValues = new ArrayList<V>(values);
+			targetMap.put(key, currentValues);
+		}
 	}
 
 	@Override
@@ -69,7 +74,9 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 
 	public LinkedMultiValueMap<K, V> deepCopy() {
 		LinkedMultiValueMap<K, V> copy = new LinkedMultiValueMap<>(this.targetMap.size());
-		this.targetMap.forEach((key, value) -> copy.put(key, new LinkedList<>(value)));
+		for (Map.Entry<K, List<V>> entry : targetMap.entrySet()) {
+			copy.put(entry.getKey(), new LinkedList<>(entry.getValue()));
+		}
 		return copy;
 	}
 
@@ -136,7 +143,9 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 
 	@Override
 	public void setAll(Map<K, V> values) {
-		values.forEach(this::set);
+		for (Map.Entry<K, V> entry : values.entrySet()) {
+			set(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override
@@ -147,8 +156,9 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 	@Override
 	public Map<K, V> toSingleValueMap() {
 		LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<>(this.targetMap.size());
-		this.targetMap.forEach((key, value) -> singleValueMap.put(key, value.get(0)));
-
+		for (Map.Entry<K, List<V>> entry : targetMap.entrySet()) {
+			singleValueMap.put(entry.getKey(), entry.getValue().get(0));
+		}
 		return singleValueMap;
 	}
 

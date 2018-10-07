@@ -26,73 +26,6 @@ import priv.lee.cad.util.XmlUtils;
 
 public abstract class AbstractLoginFrame extends AbstractFrame implements ActionListener, Runnable {
 
-	private final static String HOST_EDITABLE = "host.editable";
-	private final static String HOST_URL = "host.url";
-	private static final Logger logger = Logger.getLogger(AbstractLoginFrame.class);
-	private static final long serialVersionUID = -8688157705470416228L;
-
-	private final String LOGIN_BUTTON_DISPLAY = "login";
-	protected ServerPanel server;
-	private ServerClientTemporary temporary;
-
-	public AbstractLoginFrame(Class<? extends AbstractLoginFrame> frameClass,
-			Class<? extends ServerClientTemporary> tempClass) {
-		super(frameClass);
-		this.temporary = XmlUtils.read(tempClass);
-		logger.debug("client temporary:" + temporary);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		temporary = toTemporary();
-
-		boolean isConnect = ClientInstanceUtils.connect(temporary.getServer(), temporary.getUserName(),
-				temporary.getUserPasswd());
-
-		ClientAssert.isTrue(isConnect, StandardPrompt.USER_NAME_PWD_ERROR);
-
-		logger.info("begin to write client temporay...");
-		XmlUtils.store(temporary);
-
-		logger.info("invoke next frame...");
-		EventQueue.invokeLater(this);
-	}
-
-	@Override
-	public double getHorizontalProportion() {
-		return 0.35d;
-	}
-
-	@Override
-	public double getVerticalProportion() {
-		return 0.35d;
-	}
-
-	@Override
-	public void initialize() {
-		logger.info("initialize " + getClass() + "  server content...");
-		server = new ServerPanel();
-		add(server);
-
-		logger.info("initialize " + getClass() + "  option content...");
-		Option login = new Option(LOGIN_BUTTON_DISPLAY, null, this);
-		add(new OptionPanel(Arrays.asList(login, Option.newCancelOption(this))));
-
-		logger.info("initialize " + getClass() + "  completed...");
-	}
-
-	@Override
-	public void run() {
-		// set next frame activate
-		startNextFrame();
-
-		dispose();
-	}
-
-	public abstract void startNextFrame();
-
-	public abstract ServerClientTemporary toTemporary();
-
 	public class ServerPanel extends AbstractPanel {
 
 		private static final long serialVersionUID = -5325225997433722990L;
@@ -187,4 +120,70 @@ public abstract class AbstractLoginFrame extends AbstractFrame implements Action
 			return temporary == null ? false : temporary.isRememberMe();
 		}
 	}
+	private final static String HOST_EDITABLE = "host.editable";
+	private final static String HOST_URL = "host.url";
+	private static final Logger logger = Logger.getLogger(AbstractLoginFrame.class);
+	private static final long serialVersionUID = -8688157705470416228L;
+	private final String LOGIN_BUTTON_DISPLAY = "login";
+	protected ServerPanel server;
+
+	private ServerClientTemporary temporary;
+
+	public AbstractLoginFrame(Class<? extends AbstractLoginFrame> frameClass,
+			Class<? extends ServerClientTemporary> tempClass) {
+		super(frameClass);
+		this.temporary = XmlUtils.read(tempClass);
+		logger.debug("client temporary:" + temporary);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		temporary = toTemporary();
+
+		boolean isConnect = ClientInstanceUtils.connect(temporary.getServer(), temporary.getUserName(),
+				temporary.getUserPasswd());
+
+		ClientAssert.isTrue(isConnect, StandardPrompt.USER_NAME_PWD_ERROR);
+
+		logger.info("begin to write client temporay...");
+		XmlUtils.store(temporary);
+
+		logger.info("invoke next frame...");
+		EventQueue.invokeLater(this);
+	}
+
+	@Override
+	public double getHorizontalProportion() {
+		return 0.35d;
+	}
+
+	@Override
+	public double getVerticalProportion() {
+		return 0.35d;
+	}
+
+	@Override
+	public void initialize() {
+		logger.info("initialize " + getClass() + "  server content...");
+		server = new ServerPanel();
+		add(server);
+
+		logger.info("initialize " + getClass() + "  option content...");
+		Option login = new Option(LOGIN_BUTTON_DISPLAY, null, this);
+		add(new OptionPanel(Arrays.asList(login, Option.newCancelOption(this))));
+
+		logger.info("initialize " + getClass() + "  completed...");
+	}
+
+	@Override
+	public void run() {
+		// set next frame activate
+		startNextFrame();
+
+		dispose();
+	}
+
+	public abstract void startNextFrame();
+
+	public abstract ServerClientTemporary toTemporary();
 }

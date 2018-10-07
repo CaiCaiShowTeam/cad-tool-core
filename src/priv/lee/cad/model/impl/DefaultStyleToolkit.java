@@ -19,6 +19,13 @@ import priv.lee.cad.util.ClientAssert;
 
 public class DefaultStyleToolkit implements StyleToolkit {
 
+	class QuitActionListenner implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
+	}
 	public static final String CHECK_IN_MENU_ITEM = "menu.option.item1";
 	public static final String CHECK_OUT_MENU_ITEM = "menu.option.item2";
 	public static final String FILE_MENU = "menu.file";
@@ -28,6 +35,7 @@ public class DefaultStyleToolkit implements StyleToolkit {
 	public static final String OPTION_MENU = "menu.option";
 	public static final String QUIT_MENU_ITEM = "menu.file.item1";
 	public static ResourceMap resourceMap;
+
 	{
 		resourceMap = new GlobalResourceMap();
 	}
@@ -86,13 +94,5 @@ public class DefaultStyleToolkit implements StyleToolkit {
 		bar.add(file);
 		bar.add(option);
 		return bar;
-	}
-
-	class QuitActionListenner implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.exit(0);
-		}
 	}
 }

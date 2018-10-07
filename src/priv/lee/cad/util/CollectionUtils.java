@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -18,6 +19,172 @@ import java.util.SortedSet;
 import priv.lee.cad.model.MultiValueMap;
 
 public abstract class CollectionUtils {
+
+	private static class EnumerationIterator<E> implements Iterator<E> {
+
+		private final Enumeration<E> enumeration;
+
+		public EnumerationIterator(Enumeration<E> enumeration) {
+			this.enumeration = enumeration;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.enumeration.hasMoreElements();
+		}
+
+		@Override
+		public E next() {
+			return this.enumeration.nextElement();
+		}
+
+		@Override
+		public void remove() throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("Not supported");
+		}
+	}
+
+	@SuppressWarnings("serial")
+	private static class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializable {
+
+		private final Map<K, List<V>> map;
+
+		public MultiValueMapAdapter(Map<K, List<V>> map) {
+			ClientAssert.notNull(map, "'map' must not be null");
+			this.map = map;
+		}
+
+		@Override
+		public void add(K key, V value) {
+			if (!map.containsKey(key)) {
+				List<V> values = Arrays.asList(value);
+				map.put(key, values);
+			}
+		}
+
+		@Override
+		public void addAll(K key, List<? extends V> values) {
+			if (!map.containsKey(key)) {
+				List<V> currentValues = new ArrayList<V>(values);
+				map.put(key, currentValues);
+			}
+		}
+
+		@Override
+		public void addAll(MultiValueMap<K, V> values) {
+			for (Entry<K, List<V>> entry : values.entrySet()) {
+				addAll(entry.getKey(), entry.getValue());
+			}
+		}
+
+		@Override
+		public void clear() {
+			this.map.clear();
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			return this.map.containsKey(key);
+		}
+
+		@Override
+		public boolean containsValue(Object value) {
+			return this.map.containsValue(value);
+		}
+
+		@Override
+		public Set<Entry<K, List<V>>> entrySet() {
+			return this.map.entrySet();
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			}
+			return this.map.equals(other);
+		}
+
+		@Override
+		public List<V> get(Object key) {
+			return this.map.get(key);
+		}
+
+		@Override
+
+		public V getFirst(K key) {
+			List<V> values = this.map.get(key);
+			return (values != null ? values.get(0) : null);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.map.hashCode();
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.map.isEmpty();
+		}
+
+		@Override
+		public Set<K> keySet() {
+			return this.map.keySet();
+		}
+
+		@Override
+		public List<V> put(K key, List<V> value) {
+			return this.map.put(key, value);
+		}
+
+		@Override
+		public void putAll(Map<? extends K, ? extends List<V>> map) {
+			this.map.putAll(map);
+		}
+
+		@Override
+		public List<V> remove(Object key) {
+			return this.map.remove(key);
+		}
+
+		@Override
+		public void set(K key, V value) {
+			List<V> values = new LinkedList<>();
+			values.add(value);
+			this.map.put(key, values);
+		}
+
+		@Override
+		public void setAll(Map<K, V> values) {
+			for (Map.Entry<K, V> entry : values.entrySet()) {
+				set(entry.getKey(), entry.getValue());
+			}
+		}
+
+		@Override
+		public int size() {
+			return this.map.size();
+		}
+
+		@Override
+		public Map<K, V> toSingleValueMap() {
+			LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<>(this.map.size());
+			for (Map.Entry<K, List<V>> entry : map.entrySet()) {
+				singleValueMap.put(entry.getKey(), entry.getValue().get(0));
+			}
+			return singleValueMap;
+		}
+
+		@Override
+		public String toString() {
+			return this.map.toString();
+		}
+
+		@Override
+		public Collection<List<V>> values() {
+			return this.map.values();
+		}
+	}
 
 	@SuppressWarnings("rawtypes")
 	public static List arrayToList(Object source) {
@@ -224,169 +391,11 @@ public abstract class CollectionUtils {
 	public static <K, V> MultiValueMap<K, V> unmodifiableMultiValueMap(MultiValueMap<? extends K, ? extends V> map) {
 		ClientAssert.notNull(map, "'map' must not be null");
 		Map<K, List<V>> result = new LinkedHashMap<>(map.size());
-		map.forEach((key, value) -> {
-			List<? extends V> values = Collections.unmodifiableList(value);
-			result.put(key, (List<V>) values);
-		});
+		for (Entry<? extends K, ?> entry : map.entrySet()) {
+			List<? extends V> values = Collections.unmodifiableList((List<? extends V>) entry.getValue());
+			result.put(entry.getKey(), (List<V>) values);
+		}
 		Map<K, List<V>> unmodifiableMap = Collections.unmodifiableMap(result);
 		return toMultiValueMap(unmodifiableMap);
-	}
-
-	private static class EnumerationIterator<E> implements Iterator<E> {
-
-		private final Enumeration<E> enumeration;
-
-		public EnumerationIterator(Enumeration<E> enumeration) {
-			this.enumeration = enumeration;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return this.enumeration.hasMoreElements();
-		}
-
-		@Override
-		public E next() {
-			return this.enumeration.nextElement();
-		}
-
-		@Override
-		public void remove() throws UnsupportedOperationException {
-			throw new UnsupportedOperationException("Not supported");
-		}
-	}
-
-	@SuppressWarnings("serial")
-	private static class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializable {
-
-		private final Map<K, List<V>> map;
-
-		public MultiValueMapAdapter(Map<K, List<V>> map) {
-			ClientAssert.notNull(map, "'map' must not be null");
-			this.map = map;
-		}
-
-		@Override
-		public void add(K key, V value) {
-			List<V> values = this.map.computeIfAbsent(key, k -> new LinkedList<>());
-			values.add(value);
-		}
-
-		@Override
-		public void addAll(K key, List<? extends V> values) {
-			List<V> currentValues = this.map.computeIfAbsent(key, k -> new LinkedList<>());
-			currentValues.addAll(values);
-		}
-
-		@Override
-		public void addAll(MultiValueMap<K, V> values) {
-			for (Entry<K, List<V>> entry : values.entrySet()) {
-				addAll(entry.getKey(), entry.getValue());
-			}
-		}
-
-		@Override
-		public void clear() {
-			this.map.clear();
-		}
-
-		@Override
-		public boolean containsKey(Object key) {
-			return this.map.containsKey(key);
-		}
-
-		@Override
-		public boolean containsValue(Object value) {
-			return this.map.containsValue(value);
-		}
-
-		@Override
-		public Set<Entry<K, List<V>>> entrySet() {
-			return this.map.entrySet();
-		}
-
-		@Override
-		public boolean equals(Object other) {
-			if (this == other) {
-				return true;
-			}
-			return this.map.equals(other);
-		}
-
-		@Override
-		public List<V> get(Object key) {
-			return this.map.get(key);
-		}
-
-		@Override
-
-		public V getFirst(K key) {
-			List<V> values = this.map.get(key);
-			return (values != null ? values.get(0) : null);
-		}
-
-		@Override
-		public int hashCode() {
-			return this.map.hashCode();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return this.map.isEmpty();
-		}
-
-		@Override
-		public Set<K> keySet() {
-			return this.map.keySet();
-		}
-
-		@Override
-		public List<V> put(K key, List<V> value) {
-			return this.map.put(key, value);
-		}
-
-		@Override
-		public void putAll(Map<? extends K, ? extends List<V>> map) {
-			this.map.putAll(map);
-		}
-
-		@Override
-		public List<V> remove(Object key) {
-			return this.map.remove(key);
-		}
-
-		@Override
-		public void set(K key, V value) {
-			List<V> values = new LinkedList<>();
-			values.add(value);
-			this.map.put(key, values);
-		}
-
-		@Override
-		public void setAll(Map<K, V> values) {
-			values.forEach(this::set);
-		}
-
-		@Override
-		public int size() {
-			return this.map.size();
-		}
-
-		@Override
-		public Map<K, V> toSingleValueMap() {
-			LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<>(this.map.size());
-			this.map.forEach((key, value) -> singleValueMap.put(key, value.get(0)));
-			return singleValueMap;
-		}
-
-		@Override
-		public String toString() {
-			return this.map.toString();
-		}
-
-		@Override
-		public Collection<List<V>> values() {
-			return this.map.values();
-		}
 	}
 }
