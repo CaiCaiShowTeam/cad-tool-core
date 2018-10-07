@@ -40,11 +40,11 @@ public class Option extends JButton implements ResourceMapper {
 			window.dispose();
 		}
 	}
+	
 	public static final String BROWSE_BUTTON = "browse";
 	public static final String CONFIRM_BUTTON = "confirm";
 	private static final String PREFIX = Option.class.getSimpleName().toLowerCase();
 	protected static ResourceMap resourceMap = new ComponentResourceMap(PREFIX, Option.class);
-
 	private static final long serialVersionUID = -7593230479709858017L;
 
 	public static Option newCancelOption(Window window) {
