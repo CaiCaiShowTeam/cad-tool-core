@@ -12,6 +12,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 
 import priv.lee.cad.util.ClientAssert;
+import priv.lee.cad.util.ObjectUtils;
 
 public class DefaultGroupLayout extends GroupLayout {
 
@@ -76,14 +77,14 @@ public class DefaultGroupLayout extends GroupLayout {
 
 				// ~ add to horizontal group
 				JComponent component = components.get(index);
-				if (hpGroup == null) {
+				if (ObjectUtils.isEmpty(hpGroup)) {
 					hpGroup = createParallelGroup();
 				}
 				hpGroup.addComponent(component);
 
 				// ~ add to verticals group
 				ParallelGroup vpGroup = map.get(j);
-				if (vpGroup == null) {
+				if (ObjectUtils.isEmpty(vpGroup)) {
 					vpGroup = createParallelGroup();
 					vsGroup.addGroup(vpGroup);
 					vsGroup.addGap(vGap);
@@ -92,7 +93,7 @@ public class DefaultGroupLayout extends GroupLayout {
 				vpGroup.addComponent(component);
 			}
 
-			if (hpGroup == null) {
+			if (ObjectUtils.isEmpty(hpGroup)) {
 				break;
 			}
 			hsGroup.addGroup(hpGroup);

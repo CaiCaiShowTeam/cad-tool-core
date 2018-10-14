@@ -13,7 +13,7 @@ public class FTPUtils {
 	private static FTPUtils utils;
 
 	public static FTPUtils newInstance() {
-		if (utils == null) {
+		if (ObjectUtils.isEmpty(utils)) {
 			utils = new FTPUtils();
 		}
 		return utils;
@@ -41,7 +41,7 @@ public class FTPUtils {
 	}
 
 	public boolean connect() {
-		if (ftpClient != null && ftpClient.isConnected()) {
+		if (!ObjectUtils.isEmpty(ftpClient) && ftpClient.isConnected()) {
 			return true;
 		}
 
@@ -72,7 +72,7 @@ public class FTPUtils {
 	}
 
 	public void disconnect() {
-		if (ftpClient != null && ftpClient.isConnected()) {
+		if (!ObjectUtils.isEmpty(ftpClient) && ftpClient.isConnected()) {
 			try {
 				ftpClient.logout();
 				ftpClient.disconnect();
@@ -122,7 +122,7 @@ public class FTPUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (input != null) {
+			if (!ObjectUtils.isEmpty(input)) {
 				try {
 					input.close();
 				} catch (IOException e) {

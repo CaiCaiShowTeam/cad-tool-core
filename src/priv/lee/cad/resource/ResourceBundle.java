@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import priv.lee.cad.util.ClientAssert;
+import priv.lee.cad.util.ObjectUtils;
 import priv.lee.cad.util.PropertiesUtils;
 
 public class ResourceBundle {
@@ -29,7 +30,8 @@ public class ResourceBundle {
 
 	private void initResource() {
 		try {
-			String resource = repository + (clazz == null ? standard : (clazz.getSimpleName() + ".properties"));
+			String resource = repository
+					+ (ObjectUtils.isEmpty(clazz) ? standard : (clazz.getSimpleName() + ".properties"));
 			logger.debug("resource:" + resource);
 			InputStream stream = ResourceBundle.class.getClassLoader().getResourceAsStream(resource);
 			ClientAssert.notNull(stream, "Resource[" + resource + "] does not exsit,check the repository");

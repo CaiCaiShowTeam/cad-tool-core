@@ -68,7 +68,7 @@ public abstract class Assert {
 	}
 
 	private static void instanceCheckFailed(Class<?> type, Object obj, String msg) {
-		String className = (obj != null ? obj.getClass().getName() : "null");
+		String className = (!ObjectUtils.isEmpty(obj) ? obj.getClass().getName() : "null");
 		String result = "";
 		boolean defaultMessage = true;
 		if (StringUtils.hasLength(msg)) {
@@ -91,14 +91,14 @@ public abstract class Assert {
 
 	public static void isAssignable(Class<?> superType, Class<?> subType, String message) {
 		notNull(superType, "Super type to check against must not be null");
-		if (subType == null || !superType.isAssignableFrom(subType)) {
+		if (ObjectUtils.isEmpty(subType) || !superType.isAssignableFrom(subType)) {
 			assignableCheckFailed(superType, subType, message);
 		}
 	}
 
 	public static void isAssignable(Class<?> superType, Class<?> subType, Supplier<String> messageSupplier) {
 		notNull(superType, "Super type to check against must not be null");
-		if (subType == null || !superType.isAssignableFrom(subType)) {
+		if (ObjectUtils.isEmpty(subType) || !superType.isAssignableFrom(subType)) {
 			assignableCheckFailed(superType, subType, nullSafeGet(messageSupplier));
 		}
 	}
@@ -122,13 +122,13 @@ public abstract class Assert {
 	}
 
 	public static void isNull(Object object, String message) {
-		if (object != null) {
+		if (!ObjectUtils.isEmpty(object)) {
 			throwIllegalArgumentException(message);
 		}
 	}
 
 	public static void isNull(Object object, Supplier<String> messageSupplier) {
-		if (object != null) {
+		if (!ObjectUtils.isEmpty(object)) {
 			throwIllegalArgumentException(nullSafeGet(messageSupplier));
 		}
 	}
@@ -164,9 +164,9 @@ public abstract class Assert {
 	}
 
 	public static void noNullElements(Object[] array, String message) {
-		if (array != null) {
+		if (!ObjectUtils.isEmpty(array)) {
 			for (Object element : array) {
-				if (element == null) {
+				if (ObjectUtils.isEmpty(element)) {
 					throwIllegalArgumentException(message);
 				}
 			}
@@ -174,9 +174,9 @@ public abstract class Assert {
 	}
 
 	public static void noNullElements(Object[] array, Supplier<String> messageSupplier) {
-		if (array != null) {
+		if (!ObjectUtils.isEmpty(array)) {
 			for (Object element : array) {
-				if (element == null) {
+				if (ObjectUtils.isEmpty(element)) {
 					throwIllegalArgumentException(nullSafeGet(messageSupplier));
 				}
 			}
@@ -220,19 +220,19 @@ public abstract class Assert {
 	}
 
 	public static void notNull(Object object, String message) {
-		if (object == null) {
+		if (ObjectUtils.isEmpty(object)) {
 			throwIllegalArgumentException(message);
 		}
 	}
 
 	public static void notNull(Object object, Supplier<String> messageSupplier) {
-		if (object == null) {
+		if (ObjectUtils.isEmpty(object)) {
 			throwIllegalArgumentException(nullSafeGet(messageSupplier));
 		}
 	}
 
 	private static String nullSafeGet(Supplier<String> messageSupplier) {
-		return (messageSupplier != null ? messageSupplier.get() : null);
+		return (!ObjectUtils.isEmpty(messageSupplier) ? messageSupplier.get() : null);
 	}
 
 	public static void state(boolean expression, String message) {

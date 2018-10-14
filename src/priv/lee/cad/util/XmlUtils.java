@@ -34,7 +34,7 @@ public class XmlUtils {
 		} catch (Exception e) {
 			logger.warn("Class:" + clazz + " found no field named:" + name);
 		} finally {
-			if (field != null) {
+			if (!ObjectUtils.isEmpty(field)) {
 				field.setAccessible(true);
 				return field;
 			}

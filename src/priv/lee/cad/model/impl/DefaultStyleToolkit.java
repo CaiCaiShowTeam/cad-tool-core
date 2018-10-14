@@ -16,8 +16,17 @@ import javax.swing.JMenuItem;
 import priv.lee.cad.model.ResourceMap;
 import priv.lee.cad.model.StyleToolkit;
 import priv.lee.cad.util.ClientAssert;
+import priv.lee.cad.util.ObjectUtils;
 
 public class DefaultStyleToolkit implements StyleToolkit {
+
+	class QuitActionListenner implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
+	}
 
 	public static final String CHECK_IN_MENU_ITEM = "menu.option.item1";
 	public static final String CHECK_OUT_MENU_ITEM = "menu.option.item2";
@@ -28,6 +37,7 @@ public class DefaultStyleToolkit implements StyleToolkit {
 	public static final String OPTION_MENU = "menu.option";
 	public static final String QUIT_MENU_ITEM = "menu.file.item1";
 	public static ResourceMap resourceMap;
+
 	{
 		resourceMap = new GlobalResourceMap();
 	}
@@ -68,12 +78,12 @@ public class DefaultStyleToolkit implements StyleToolkit {
 		option.getPopupMenu().setLightWeightPopupEnabled(false);
 
 		JMenuItem checkin = new JMenuItem(resourceMap.getString(CHECK_IN_MENU_ITEM));
-		if (checkinListener != null) {
+		if (!ObjectUtils.isEmpty(checkinListener)) {
 			checkin.addActionListener(checkinListener);
 		}
 
 		JMenuItem checkout = new JMenuItem(resourceMap.getString(CHECK_OUT_MENU_ITEM));
-		if (checkoutListener != null) {
+		if (!ObjectUtils.isEmpty(checkoutListener)) {
 			checkout.addActionListener(checkoutListener);
 
 		}
@@ -86,13 +96,5 @@ public class DefaultStyleToolkit implements StyleToolkit {
 		bar.add(file);
 		bar.add(option);
 		return bar;
-	}
-
-	class QuitActionListenner implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.exit(0);
-		}
 	}
 }

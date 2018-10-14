@@ -20,15 +20,15 @@ public abstract class ObjectUtils {
 
 	public static <A, O extends A> A[] addObjectToArray(A[] array, O obj) {
 		Class<?> compType = Object.class;
-		if (array != null) {
+		if (!isEmpty(array)) {
 			compType = array.getClass().getComponentType();
-		} else if (obj != null) {
+		} else if (!ObjectUtils.isEmpty(obj)) {
 			compType = obj.getClass();
 		}
-		int newArrLength = (array != null ? array.length + 1 : 1);
+		int newArrLength = (!ObjectUtils.isEmpty(array) ? array.length + 1 : 1);
 		@SuppressWarnings("unchecked")
 		A[] newArr = (A[]) Array.newInstance(compType, newArrLength);
-		if (array != null) {
+		if (!ObjectUtils.isEmpty(array)) {
 			System.arraycopy(array, 0, newArr, 0, array.length);
 		}
 		newArr[newArr.length - 1] = obj;
@@ -91,7 +91,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static boolean containsElement(Object[] array, Object element) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return false;
 		}
 		for (Object arrayEle : array) {
@@ -103,7 +103,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String getDisplayString(Object obj) {
-		if (obj == null) {
+		if (isEmpty(obj)) {
 			return EMPTY_STRING;
 		}
 		return nullSafeToString(obj);
@@ -114,14 +114,14 @@ public abstract class ObjectUtils {
 	}
 
 	public static String identityToString(Object obj) {
-		if (obj == null) {
+		if (isEmpty(obj)) {
 			return EMPTY_STRING;
 		}
 		return obj.getClass().getName() + "@" + getIdentityHexString(obj);
 	}
 
 	public static boolean isArray(Object obj) {
-		return (obj != null && obj.getClass().isArray());
+		return (!ObjectUtils.isEmpty(obj) && obj.getClass().isArray());
 	}
 
 	public static boolean isCheckedException(Throwable ex) {
@@ -132,7 +132,7 @@ public abstract class ObjectUtils {
 		if (!isCheckedException(ex)) {
 			return true;
 		}
-		if (declaredExceptions != null) {
+		if (!ObjectUtils.isEmpty(declaredExceptions)) {
 			for (Class<?> declaredException : declaredExceptions) {
 				if (declaredException.isInstance(ex)) {
 					return true;
@@ -173,14 +173,14 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeClassName(Object obj) {
-		return (obj != null ? obj.getClass().getName() : NULL_STRING);
+		return (!ObjectUtils.isEmpty(obj) ? obj.getClass().getName() : NULL_STRING);
 	}
 
 	public static boolean nullSafeEquals(Object o1, Object o2) {
 		if (o1 == o2) {
 			return true;
 		}
-		if (o1 == null || o2 == null) {
+		if (isEmpty(o1) || isEmpty(o2)) {
 			return false;
 		}
 		if (o1.equals(o2)) {
@@ -193,7 +193,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(boolean[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -204,7 +204,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(byte[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -215,7 +215,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(char[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -226,7 +226,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(double[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -237,7 +237,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(float[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -248,7 +248,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(int[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -259,7 +259,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(long[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -270,7 +270,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(Object obj) {
-		if (obj == null) {
+		if (isEmpty(obj)) {
 			return 0;
 		}
 		if (obj.getClass().isArray()) {
@@ -306,7 +306,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(Object[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -317,7 +317,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static int nullSafeHashCode(short[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return 0;
 		}
 		int hash = INITIAL_HASH;
@@ -328,7 +328,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(boolean[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -350,7 +350,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(byte[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -371,7 +371,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(char[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -392,7 +392,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(double[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -414,7 +414,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(float[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -436,7 +436,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(int[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -457,7 +457,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(long[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -478,7 +478,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(Object obj) {
-		if (obj == null) {
+		if (isEmpty(obj)) {
 			return NULL_STRING;
 		}
 		if (obj instanceof String) {
@@ -512,11 +512,11 @@ public abstract class ObjectUtils {
 			return nullSafeToString((short[]) obj);
 		}
 		String str = obj.toString();
-		return (str != null ? str : EMPTY_STRING);
+		return (!ObjectUtils.isEmpty(str) ? str : EMPTY_STRING);
 	}
 
 	public static String nullSafeToString(Object[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -537,7 +537,7 @@ public abstract class ObjectUtils {
 	}
 
 	public static String nullSafeToString(short[] array) {
-		if (array == null) {
+		if (isEmpty(array)) {
 			return NULL_STRING;
 		}
 		int length = array.length;
@@ -561,7 +561,7 @@ public abstract class ObjectUtils {
 		if (source instanceof Object[]) {
 			return (Object[]) source;
 		}
-		if (source == null) {
+		if (isEmpty(source)) {
 			return new Object[0];
 		}
 		if (!source.getClass().isArray()) {

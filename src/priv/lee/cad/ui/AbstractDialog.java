@@ -21,6 +21,7 @@ import priv.lee.cad.model.TieContainer;
 import priv.lee.cad.model.impl.DefaultStyleToolkit;
 import priv.lee.cad.model.impl.GlobalResourceMap;
 import priv.lee.cad.util.ClientAssert;
+import priv.lee.cad.util.ObjectUtils;
 
 public abstract class AbstractDialog extends JDialog
 		implements SelfAdaptionComponent, ResourceMapper, TieContainer, ActionListener {
@@ -42,7 +43,7 @@ public abstract class AbstractDialog extends JDialog
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (callback != null) {
+		if (!ObjectUtils.isEmpty(callback)) {
 			callback.call(setCallbackObject());
 		}
 		dispose();

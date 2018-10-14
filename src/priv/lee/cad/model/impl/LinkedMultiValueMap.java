@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import priv.lee.cad.model.MultiValueMap;
+import priv.lee.cad.util.ObjectUtils;
 
 public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable, Cloneable {
 
@@ -92,7 +93,7 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 	@Override
 	public V getFirst(K key) {
 		List<V> values = this.targetMap.get(key);
-		return (values != null ? values.get(0) : null);
+		return (!ObjectUtils.isEmpty(values) ? values.get(0) : null);
 	}
 
 	@Override

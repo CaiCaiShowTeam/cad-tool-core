@@ -275,10 +275,10 @@ public abstract class StringUtils {
 
 	public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
 
-		if (str == null) {
+		if (ObjectUtils.isEmpty(str)) {
 			return new String[0];
 		}
-		if (delimiter == null) {
+		if (ObjectUtils.isEmpty(delimiter)) {
 			return new String[] { str };
 		}
 
@@ -303,12 +303,12 @@ public abstract class StringUtils {
 	}
 
 	public static boolean endsWithIgnoreCase(String str, String suffix) {
-		return (str != null && suffix != null && str.length() >= suffix.length()
+		return (!ObjectUtils.isEmpty(str) && !ObjectUtils.isEmpty(suffix) && str.length() >= suffix.length()
 				&& str.regionMatches(true, str.length() - suffix.length(), suffix, 0, suffix.length()));
 	}
 
 	public static String getFilename(String path) {
-		if (path == null) {
+		if (ObjectUtils.isEmpty(path)) {
 			return null;
 		}
 
@@ -317,7 +317,7 @@ public abstract class StringUtils {
 	}
 
 	public static String getFilenameExtension(String path) {
-		if (path == null) {
+		if (ObjectUtils.isEmpty(path)) {
 			return null;
 		}
 
@@ -335,23 +335,23 @@ public abstract class StringUtils {
 	}
 
 	public static boolean hasLength(CharSequence str) {
-		return (str != null && str.length() > 0);
+		return (!ObjectUtils.isEmpty(str) && str.length() > 0);
 	}
 
 	public static boolean hasLength(String str) {
-		return (str != null && !str.isEmpty());
+		return (!ObjectUtils.isEmpty(str) && !str.isEmpty());
 	}
 
 	public static boolean hasText(CharSequence str) {
-		return (str != null && str.length() > 0 && containsText(str));
+		return (!ObjectUtils.isEmpty(str) && str.length() > 0 && containsText(str));
 	}
 
 	public static boolean hasText(String str) {
-		return (str != null && !str.isEmpty() && containsText(str));
+		return (!ObjectUtils.isEmpty(str) && !str.isEmpty() && containsText(str));
 	}
 
 	public static boolean isEmpty(Object str) {
-		return (str == null || "".equals(str));
+		return (ObjectUtils.isEmpty(str) || "".equals(str));
 	}
 
 	public static Locale parseLocale(String localeValue) {
@@ -400,7 +400,7 @@ public abstract class StringUtils {
 	}
 
 	public static String quote(String str) {
-		return (str != null ? "'" + str + "'" : null);
+		return (!ObjectUtils.isEmpty(str) ? "'" + str + "'" : null);
 	}
 
 	public static Object quoteIfString(Object obj) {
@@ -420,7 +420,7 @@ public abstract class StringUtils {
 	}
 
 	public static String replace(String inString, String oldPattern, String newPattern) {
-		if (!hasLength(inString) || !hasLength(oldPattern) || newPattern == null) {
+		if (!hasLength(inString) || !hasLength(oldPattern) || ObjectUtils.isEmpty(newPattern)) {
 			return inString;
 		}
 		int index = inString.indexOf(oldPattern);
@@ -484,11 +484,11 @@ public abstract class StringUtils {
 
 		Properties result = new Properties();
 		for (String element : array) {
-			if (charsToDelete != null) {
+			if (!ObjectUtils.isEmpty(charsToDelete)) {
 				element = deleteAny(element, charsToDelete);
 			}
 			String[] splittedElement = split(element, delimiter);
-			if (splittedElement == null) {
+			if (ObjectUtils.isEmpty(splittedElement)) {
 				continue;
 			}
 			result.setProperty(splittedElement[0].trim(), splittedElement[1].trim());
@@ -497,7 +497,7 @@ public abstract class StringUtils {
 	}
 
 	public static boolean startsWithIgnoreCase(String str, String prefix) {
-		return (str != null && prefix != null && str.length() >= prefix.length()
+		return (!ObjectUtils.isEmpty(str) && !ObjectUtils.isEmpty(prefix) && str.length() >= prefix.length()
 				&& str.regionMatches(true, 0, prefix, 0, prefix.length()));
 	}
 
@@ -538,7 +538,7 @@ public abstract class StringUtils {
 	public static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens,
 			boolean ignoreEmptyTokens) {
 
-		if (str == null) {
+		if (ObjectUtils.isEmpty(str)) {
 			return new String[0];
 		}
 
@@ -588,7 +588,7 @@ public abstract class StringUtils {
 		String[] result = new String[array.length];
 		for (int i = 0; i < array.length; i++) {
 			String element = array[i];
-			result[i] = (element != null ? element.trim() : null);
+			result[i] = (!ObjectUtils.isEmpty(element) ? element.trim() : null);
 		}
 		return result;
 	}

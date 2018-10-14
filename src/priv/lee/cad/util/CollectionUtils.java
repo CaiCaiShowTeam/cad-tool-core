@@ -19,219 +19,6 @@ import priv.lee.cad.model.MultiValueMap;
 
 public abstract class CollectionUtils {
 
-	@SuppressWarnings("rawtypes")
-	public static List arrayToList(Object source) {
-		return Arrays.asList(ObjectUtils.toObjectArray(source));
-	}
-
-	public static boolean contains(Enumeration<?> enumeration, Object element) {
-		if (enumeration != null) {
-			while (enumeration.hasMoreElements()) {
-				Object candidate = enumeration.nextElement();
-				if (ObjectUtils.nullSafeEquals(candidate, element)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static boolean contains(Iterator<?> iterator, Object element) {
-		if (iterator != null) {
-			while (iterator.hasNext()) {
-				Object candidate = iterator.next();
-				if (ObjectUtils.nullSafeEquals(candidate, element)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static boolean containsAny(Collection<?> source, Collection<?> candidates) {
-		if (isEmpty(source) || isEmpty(candidates)) {
-			return false;
-		}
-		for (Object candidate : candidates) {
-			if (source.contains(candidate)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean containsInstance(Collection<?> collection, Object element) {
-		if (collection != null) {
-			for (Object candidate : collection) {
-				if (candidate == element) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static Class<?> findCommonElementType(Collection<?> collection) {
-		if (isEmpty(collection)) {
-			return null;
-		}
-		Class<?> candidate = null;
-		for (Object val : collection) {
-			if (val != null) {
-				if (candidate == null) {
-					candidate = val.getClass();
-				} else if (candidate != val.getClass()) {
-					return null;
-				}
-			}
-		}
-		return candidate;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <E> E findFirstMatch(Collection<?> source, Collection<E> candidates) {
-		if (isEmpty(source) || isEmpty(candidates)) {
-			return null;
-		}
-		for (Object candidate : candidates) {
-			if (source.contains(candidate)) {
-				return (E) candidate;
-			}
-		}
-		return null;
-	}
-
-	public static Object findValueOfType(Collection<?> collection, Class<?>[] types) {
-		if (isEmpty(collection) || ObjectUtils.isEmpty(types)) {
-			return null;
-		}
-		for (Class<?> type : types) {
-			Object value = findValueOfType(collection, type);
-			if (value != null) {
-				return value;
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T findValueOfType(Collection<?> collection, Class<T> type) {
-		if (isEmpty(collection)) {
-			return null;
-		}
-		T value = null;
-		for (Object element : collection) {
-			if (type == null || type.isInstance(element)) {
-				if (value != null) {
-					// More than one value found... no clear single value.
-					return null;
-				}
-				value = (T) element;
-			}
-		}
-		return value;
-	}
-
-	public static boolean hasUniqueObject(Collection<?> collection) {
-		if (isEmpty(collection)) {
-			return false;
-		}
-		boolean hasCandidate = false;
-		Object candidate = null;
-		for (Object elem : collection) {
-			if (!hasCandidate) {
-				hasCandidate = true;
-				candidate = elem;
-			} else if (candidate != elem) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public static boolean isEmpty(Collection<?> collection) {
-		return (collection == null || collection.isEmpty());
-	}
-
-	public static boolean isEmpty(Map<?, ?> map) {
-		return (map == null || map.isEmpty());
-	}
-
-	public static <T> T lastElement(List<T> list) {
-		if (isEmpty(list)) {
-			return null;
-		}
-		return list.get(list.size() - 1);
-	}
-
-	public static <T> T lastElement(Set<T> set) {
-		if (isEmpty(set)) {
-			return null;
-		}
-		if (set instanceof SortedSet) {
-			return ((SortedSet<T>) set).last();
-		}
-
-		// Full iteration necessary...
-		Iterator<T> it = set.iterator();
-		T last = null;
-		while (it.hasNext()) {
-			last = it.next();
-		}
-		return last;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <E> void mergeArrayIntoCollection(Object array, Collection<E> collection) {
-		Object[] arr = ObjectUtils.toObjectArray(array);
-		for (Object elem : arr) {
-			collection.add((E) elem);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <K, V> void mergePropertiesIntoMap(Properties props, Map<K, V> map) {
-		if (props != null) {
-			for (Enumeration<?> en = props.propertyNames(); en.hasMoreElements();) {
-				String key = (String) en.nextElement();
-				Object value = props.get(key);
-				if (value == null) {
-					// Allow for defaults fallback or potentially overridden accessor...
-					value = props.getProperty(key);
-				}
-				map.put((K) key, (V) value);
-			}
-		}
-	}
-
-	public static <A, E extends A> A[] toArray(Enumeration<E> enumeration, A[] array) {
-		ArrayList<A> elements = new ArrayList<>();
-		while (enumeration.hasMoreElements()) {
-			elements.add(enumeration.nextElement());
-		}
-		return elements.toArray(array);
-	}
-
-	public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {
-		return new EnumerationIterator<>(enumeration);
-	}
-
-	public static <K, V> MultiValueMap<K, V> toMultiValueMap(Map<K, List<V>> map) {
-		return new MultiValueMapAdapter<>(map);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <K, V> MultiValueMap<K, V> unmodifiableMultiValueMap(MultiValueMap<? extends K, ? extends V> map) {
-		ClientAssert.notNull(map, "'map' must not be null");
-		Map<K, List<V>> result = new LinkedHashMap<>(map.size());
-		map.forEach((key, value) -> {
-			List<? extends V> values = Collections.unmodifiableList(value);
-			result.put(key, (List<V>) values);
-		});
-		Map<K, List<V>> unmodifiableMap = Collections.unmodifiableMap(result);
-		return toMultiValueMap(unmodifiableMap);
-	}
-
 	private static class EnumerationIterator<E> implements Iterator<E> {
 
 		private final Enumeration<E> enumeration;
@@ -322,7 +109,7 @@ public abstract class CollectionUtils {
 
 		public V getFirst(K key) {
 			List<V> values = this.map.get(key);
-			return (values != null ? values.get(0) : null);
+			return (!ObjectUtils.isEmpty(values) ? values.get(0) : null);
 		}
 
 		@Override
@@ -388,5 +175,218 @@ public abstract class CollectionUtils {
 		public Collection<List<V>> values() {
 			return this.map.values();
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static List arrayToList(Object source) {
+		return Arrays.asList(ObjectUtils.toObjectArray(source));
+	}
+
+	public static boolean contains(Enumeration<?> enumeration, Object element) {
+		if (!ObjectUtils.isEmpty(enumeration)) {
+			while (enumeration.hasMoreElements()) {
+				Object candidate = enumeration.nextElement();
+				if (ObjectUtils.nullSafeEquals(candidate, element)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean contains(Iterator<?> iterator, Object element) {
+		if (!ObjectUtils.isEmpty(iterator)) {
+			while (iterator.hasNext()) {
+				Object candidate = iterator.next();
+				if (ObjectUtils.nullSafeEquals(candidate, element)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean containsAny(Collection<?> source, Collection<?> candidates) {
+		if (isEmpty(source) || isEmpty(candidates)) {
+			return false;
+		}
+		for (Object candidate : candidates) {
+			if (source.contains(candidate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean containsInstance(Collection<?> collection, Object element) {
+		if (!ObjectUtils.isEmpty(collection)) {
+			for (Object candidate : collection) {
+				if (candidate == element) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static Class<?> findCommonElementType(Collection<?> collection) {
+		if (isEmpty(collection)) {
+			return null;
+		}
+		Class<?> candidate = null;
+		for (Object val : collection) {
+			if (!ObjectUtils.isEmpty(val)) {
+				if (ObjectUtils.isEmpty(candidate)) {
+					candidate = val.getClass();
+				} else if (candidate != val.getClass()) {
+					return null;
+				}
+			}
+		}
+		return candidate;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> E findFirstMatch(Collection<?> source, Collection<E> candidates) {
+		if (isEmpty(source) || isEmpty(candidates)) {
+			return null;
+		}
+		for (Object candidate : candidates) {
+			if (source.contains(candidate)) {
+				return (E) candidate;
+			}
+		}
+		return null;
+	}
+
+	public static Object findValueOfType(Collection<?> collection, Class<?>[] types) {
+		if (isEmpty(collection) || ObjectUtils.isEmpty(types)) {
+			return null;
+		}
+		for (Class<?> type : types) {
+			Object value = findValueOfType(collection, type);
+			if (!ObjectUtils.isEmpty(value)) {
+				return value;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T findValueOfType(Collection<?> collection, Class<T> type) {
+		if (isEmpty(collection)) {
+			return null;
+		}
+		T value = null;
+		for (Object element : collection) {
+			if (ObjectUtils.isEmpty(type) || type.isInstance(element)) {
+				if (!ObjectUtils.isEmpty(value)) {
+					// More than one value found... no clear single value.
+					return null;
+				}
+				value = (T) element;
+			}
+		}
+		return value;
+	}
+
+	public static boolean hasUniqueObject(Collection<?> collection) {
+		if (isEmpty(collection)) {
+			return false;
+		}
+		boolean hasCandidate = false;
+		Object candidate = null;
+		for (Object elem : collection) {
+			if (!hasCandidate) {
+				hasCandidate = true;
+				candidate = elem;
+			} else if (candidate != elem) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isEmpty(Collection<?> collection) {
+		return (ObjectUtils.isEmpty(collection) || collection.isEmpty());
+	}
+
+	public static boolean isEmpty(Map<?, ?> map) {
+		return (ObjectUtils.isEmpty(map) || map.isEmpty());
+	}
+
+	public static <T> T lastElement(List<T> list) {
+		if (isEmpty(list)) {
+			return null;
+		}
+		return list.get(list.size() - 1);
+	}
+
+	public static <T> T lastElement(Set<T> set) {
+		if (isEmpty(set)) {
+			return null;
+		}
+		if (set instanceof SortedSet) {
+			return ((SortedSet<T>) set).last();
+		}
+
+		// Full iteration necessary...
+		Iterator<T> it = set.iterator();
+		T last = null;
+		while (it.hasNext()) {
+			last = it.next();
+		}
+		return last;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> void mergeArrayIntoCollection(Object array, Collection<E> collection) {
+		Object[] arr = ObjectUtils.toObjectArray(array);
+		for (Object elem : arr) {
+			collection.add((E) elem);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <K, V> void mergePropertiesIntoMap(Properties props, Map<K, V> map) {
+		if (!ObjectUtils.isEmpty(props)) {
+			for (Enumeration<?> en = props.propertyNames(); en.hasMoreElements();) {
+				String key = (String) en.nextElement();
+				Object value = props.get(key);
+				if (ObjectUtils.isEmpty(value)) {
+					// Allow for defaults fallback or potentially overridden accessor...
+					value = props.getProperty(key);
+				}
+				map.put((K) key, (V) value);
+			}
+		}
+	}
+
+	public static <A, E extends A> A[] toArray(Enumeration<E> enumeration, A[] array) {
+		ArrayList<A> elements = new ArrayList<>();
+		while (enumeration.hasMoreElements()) {
+			elements.add(enumeration.nextElement());
+		}
+		return elements.toArray(array);
+	}
+
+	public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {
+		return new EnumerationIterator<>(enumeration);
+	}
+
+	public static <K, V> MultiValueMap<K, V> toMultiValueMap(Map<K, List<V>> map) {
+		return new MultiValueMapAdapter<>(map);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <K, V> MultiValueMap<K, V> unmodifiableMultiValueMap(MultiValueMap<? extends K, ? extends V> map) {
+		ClientAssert.notNull(map, "'map' must not be null");
+		Map<K, List<V>> result = new LinkedHashMap<>(map.size());
+		map.forEach((key, value) -> {
+			List<? extends V> values = Collections.unmodifiableList(value);
+			result.put(key, (List<V>) values);
+		});
+		Map<K, List<V>> unmodifiableMap = Collections.unmodifiableMap(result);
+		return toMultiValueMap(unmodifiableMap);
 	}
 }

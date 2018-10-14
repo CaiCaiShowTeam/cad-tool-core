@@ -83,7 +83,8 @@ public class ClientInstanceUtils {
 
 		try {
 			HandleResult<T> result = (HandleResult<T>) rms.invoke(method, service, null,
-					argTypes == null ? new Class<?>[] {} : argTypes, argValues == null ? new Object[] {} : argValues);
+					ObjectUtils.isEmpty(argTypes) ? new Class<?>[] {} : argTypes,
+					ObjectUtils.isEmpty(argValues) ? new Object[] {} : argValues);
 
 			ClientAssert.notNull(result, "Fatal error: HandleResult is null");
 			ClientAssert.isTrue(result.getCode() == HandleResult.OK, result.getMessage());
