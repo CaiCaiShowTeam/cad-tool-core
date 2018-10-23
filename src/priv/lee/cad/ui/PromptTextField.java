@@ -86,12 +86,12 @@ public class PromptTextField extends JComponent {
 	public static PromptTextField newInstance(String prompt, String text, PromptTextFieldDimension dimension) {
 		return newInstance(new JLabel(prompt), new JTextField(text), dimension);
 	}
+	
 	private PromptTextFieldDimension dimension;
 	private MiddleAlignGap gap = new MiddleAlignGap(5, 5);
 	private int labelAligment = SwingConstants.RIGHT;
 	private LayoutManager layout = new FlowLayout(FlowLayout.LEFT, gap.hGap, gap.vGap);
 	private JLabel prompt;
-
 	private JTextField text;
 
 	private PromptTextField(JLabel prompt, JTextField text, PromptTextFieldDimension dimension) {
