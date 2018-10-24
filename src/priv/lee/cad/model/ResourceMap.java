@@ -12,7 +12,6 @@ public abstract class ResourceMap {
 	public static final String ICON = ".icon";
 	private static final Logger logger = Logger.getLogger(ResourceMap.class);
 	protected static final String SEPERATOR = ".";
-
 	private Class<?> clazz;
 
 	public ResourceMap() {

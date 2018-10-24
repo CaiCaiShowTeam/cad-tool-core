@@ -37,7 +37,6 @@ public class DefaultStyleToolkit implements StyleToolkit {
 	public static final String OPTION_MENU = "menu.option";
 	public static final String QUIT_MENU_ITEM = "menu.file.item1";
 	public static ResourceMap resourceMap;
-
 	{
 		resourceMap = new GlobalResourceMap();
 	}

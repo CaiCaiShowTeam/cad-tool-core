@@ -14,7 +14,6 @@ import priv.lee.cad.util.ObjectUtils;
 public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 3801124242820219131L;
-
 	private final Map<K, List<V>> targetMap;
 
 	public LinkedMultiValueMap() {
