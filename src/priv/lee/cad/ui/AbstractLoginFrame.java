@@ -125,11 +125,9 @@ public abstract class AbstractLoginFrame extends AbstractFrame implements Action
 	private final static String HOST_EDITABLE = "host.editable";
 	private final static String HOST_URL = "host.url";
 	private static final Logger logger = Logger.getLogger(AbstractLoginFrame.class);
-
 	private static final long serialVersionUID = -8688157705470416228L;
 	private final String LOGIN_BUTTON_DISPLAY = "login";
 	protected ServerPanel server;
-
 	private ServerClientTemporary temporary;
 
 	public AbstractLoginFrame(Class<? extends AbstractLoginFrame> frameClass,
