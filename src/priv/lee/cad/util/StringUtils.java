@@ -25,7 +25,13 @@ public abstract class StringUtils {
 
     private static final String FOLDER_SEPARATOR = "/";
 
+    public static final String EMPTY = "";
+
+    public static final String [] EMPTY_STRING_ARRAY = new String [0];
+
     private static final String TOP_PATH = "..";
+
+    public static final int INDEX_NOT_FOUND = -1;
 
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
 
@@ -724,5 +730,279 @@ public abstract class StringUtils {
 	} else {
 	    return string1.equals (string2);
 	}
+    }
+
+    public static boolean equalsIgnoreCase(final CharSequence str1, final CharSequence str2) {
+	if (str1 == null || str2 == null) {
+	    return str1 == str2;
+	} else if (str1 == str2) {
+	    return true;
+	} else if (str1.length () != str2.length ()) {
+	    return false;
+	} else {
+	    return regionMatches (str1,true,0,str2,0,str1.length ());
+	}
+    }
+
+    public static String substring(final String str, int start) {
+	if (str == null) {
+	    return null;
+	}
+
+	// handle negatives, which means last n characters
+	if (start < 0) {
+	    start = str.length () + start; // remember start is negative
+	}
+
+	if (start < 0) {
+	    start = 0;
+	}
+	if (start > str.length ()) {
+	    return EMPTY;
+	}
+
+	return str.substring (start);
+    }
+
+    public static String substring(final String str, int start, int end) {
+	if (str == null) {
+	    return null;
+	}
+
+	// handle negatives
+	if (end < 0) {
+	    end = str.length () + end; // remember end is negative
+	}
+	if (start < 0) {
+	    start = str.length () + start; // remember start is negative
+	}
+
+	// check length next
+	if (end > str.length ()) {
+	    end = str.length ();
+	}
+
+	// if start is greater than end, return ""
+	if (start > end) {
+	    return EMPTY;
+	}
+
+	if (start < 0) {
+	    start = 0;
+	}
+	if (end < 0) {
+	    end = 0;
+	}
+
+	return str.substring (start,end);
+    }
+
+    public static String substringBefore(final String str, final String separator) {
+	if (isEmpty (str) || separator == null) {
+	    return str;
+	}
+	if (separator.isEmpty ()) {
+	    return EMPTY;
+	}
+	final int pos = str.indexOf (separator);
+	if (pos == INDEX_NOT_FOUND) {
+	    return str;
+	}
+	return str.substring (0,pos);
+    }
+
+    public static String substringAfter(final String str, final String separator) {
+	if (isEmpty (str)) {
+	    return str;
+	}
+	if (separator == null) {
+	    return EMPTY;
+	}
+	final int pos = str.indexOf (separator);
+	if (pos == INDEX_NOT_FOUND) {
+	    return EMPTY;
+	}
+	return str.substring (pos + separator.length ());
+    }
+
+    public static String substringBeforeLast(final String str, final String separator) {
+	if (isEmpty (str) || isEmpty (separator)) {
+	    return str;
+	}
+	final int pos = str.lastIndexOf (separator);
+	if (pos == INDEX_NOT_FOUND) {
+	    return str;
+	}
+	return str.substring (0,pos);
+    }
+
+    public static String substringAfterLast(final String str, final String separator) {
+	if (isEmpty (str)) {
+	    return str;
+	}
+	if (isEmpty (separator)) {
+	    return EMPTY;
+	}
+	final int pos = str.lastIndexOf (separator);
+	if (pos == INDEX_NOT_FOUND || pos == str.length () - separator.length ()) {
+	    return EMPTY;
+	}
+	return str.substring (pos + separator.length ());
+    }
+
+    public static String substringBetween(final String str, final String tag) {
+	return substringBetween (str,tag,tag);
+    }
+
+    public static String substringBetween(final String str, final String open, final String close) {
+	if (str == null || open == null || close == null) {
+	    return null;
+	}
+	final int start = str.indexOf (open);
+	if (start != INDEX_NOT_FOUND) {
+	    final int end = str.indexOf (close,start + open.length ());
+	    if (end != INDEX_NOT_FOUND) {
+		return str.substring (start + open.length (),end);
+	    }
+	}
+	return null;
+    }
+
+    public static String [] substringsBetween(final String str, final String open, final String close) {
+	if (str == null || isEmpty (open) || isEmpty (close)) {
+	    return null;
+	}
+	final int strLen = str.length ();
+	if (strLen == 0) {
+	    return EMPTY_STRING_ARRAY;
+	}
+	final int closeLen = close.length ();
+	final int openLen = open.length ();
+	final List<String> list = new ArrayList<> ();
+	int pos = 0;
+	while (pos < strLen - closeLen) {
+	    int start = str.indexOf (open,pos);
+	    if (start < 0) {
+		break;
+	    }
+	    start += openLen;
+	    final int end = str.indexOf (close,start);
+	    if (end < 0) {
+		break;
+	    }
+	    list.add (str.substring (start,end));
+	    pos = end + closeLen;
+	}
+	if (list.isEmpty ()) {
+	    return null;
+	}
+	return list.toArray (new String [list.size ()]);
+    }
+
+    public static boolean contains(final CharSequence seq, final int searchChar) {
+	if (isEmpty (seq)) {
+	    return false;
+	}
+	return indexOf (seq,searchChar,0) >= 0;
+    }
+
+    public static boolean contains(final CharSequence seq, final CharSequence searchSeq) {
+	if (seq == null || searchSeq == null) {
+	    return false;
+	}
+	return indexOf (seq,searchSeq,0) >= 0;
+    }
+
+    public static boolean containsIgnoreCase(final CharSequence str, final CharSequence searchStr) {
+	if (str == null || searchStr == null) {
+	    return false;
+	}
+	final int len = searchStr.length ();
+	final int max = str.length () - len;
+	for (int i = 0; i <= max; i++) {
+	    if (regionMatches (str,true,i,searchStr,0,len)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    private static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart,
+	    final CharSequence substring, final int start, final int length) {
+	if (cs instanceof String && substring instanceof String) {
+	    return ( (String) cs ).regionMatches (ignoreCase,thisStart,(String) substring,start,length);
+	}
+	int index1 = thisStart;
+	int index2 = start;
+	int tmpLen = length;
+
+	// Extract these first so we detect NPEs the same as the
+	// java.lang.String version
+	final int srcLen = cs.length () - thisStart;
+	final int otherLen = substring.length () - start;
+
+	// Check for invalid parameters
+	if (thisStart < 0 || start < 0 || length < 0) {
+	    return false;
+	}
+
+	// Check that the regions are long enough
+	if (srcLen < length || otherLen < length) {
+	    return false;
+	}
+
+	while (tmpLen-- > 0) {
+	    final char c1 = cs.charAt (index1++);
+	    final char c2 = substring.charAt (index2++);
+
+	    if (c1 == c2) {
+		continue;
+	    }
+
+	    if (!ignoreCase) {
+		return false;
+	    }
+
+	    // The same check as in String.regionMatches():
+	    if (Character.toUpperCase (c1) != Character.toUpperCase (c2)
+		    && Character.toLowerCase (c1) != Character.toLowerCase (c2)) {
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    private static int indexOf(CharSequence cs, int searchChar, int start) {
+	if (cs instanceof String) {
+	    return ( (String) cs ).indexOf (searchChar,start);
+	}
+	final int sz = cs.length ();
+	if (start < 0) {
+	    start = 0;
+	}
+	if (searchChar < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
+	    for (int i = start; i < sz; i++) {
+		if (cs.charAt (i) == searchChar) {
+		    return i;
+		}
+	    }
+	}
+	// supplementary characters (LANG1300)
+	if (searchChar <= Character.MAX_CODE_POINT) {
+	    final char [] chars = Character.toChars (searchChar);
+	    for (int i = start; i < sz - 1; i++) {
+		final char high = cs.charAt (i);
+		final char low = cs.charAt (i + 1);
+		if (high == chars[0] && low == chars[1]) {
+		    return i;
+		}
+	    }
+	}
+	return INDEX_NOT_FOUND;
+    }
+
+    private static int indexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
+	return cs.toString ().indexOf (searchChar.toString (),start);
     }
 }
