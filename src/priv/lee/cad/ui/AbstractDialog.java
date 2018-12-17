@@ -32,6 +32,7 @@ public abstract class AbstractDialog extends JDialog
 	private LayoutManager layout = new FlowLayout(FlowLayout.CENTER);
 	protected ResourceMap resourceMap;
 	private String TITLE = "title";
+	protected String confirmType = "";
 	protected StyleToolkit toolkit = new DefaultStyleToolkit();
 
 	public <T extends AbstractDialog> AbstractDialog(Class<T> clatt, Callback callback) {
@@ -44,9 +45,18 @@ public abstract class AbstractDialog extends JDialog
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (callback != null) {
+			setConfirmType(e.getActionCommand());
 			callback.call(setCallbackObject());
 		}
 		dispose();
+	}
+
+	public String getConfirmType() {
+		return confirmType;
+	}
+
+	public void setConfirmType(String confirmType) {
+		this.confirmType = confirmType;
 	}
 
 	@Override

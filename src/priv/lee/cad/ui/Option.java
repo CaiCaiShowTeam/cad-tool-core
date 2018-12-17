@@ -45,6 +45,7 @@ public class Option extends JButton implements ResourceMapper {
 	public static final String CONFIRM_BUTTON = "confirm";
 	public static final String EXPORT_BUTTON = "export";
 	public static final String DOWNLOAD_BUTTON = "download";
+	public static final String DOWNLOADOPEN_BUTTON = "downloadOpen";
 	private static final String PREFIX = Option.class.getSimpleName().toLowerCase();
 	protected static ResourceMap resourceMap = new ComponentResourceMap(PREFIX, Option.class);
 	private static final long serialVersionUID = -7593230479709858017L;
